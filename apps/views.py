@@ -73,13 +73,14 @@ def search_results(request):
             cursor.execute("""
                 SELECT id, app, rating, reviews_int
                 FROM apps
-                WHERE app %% %s
-                ORDER BY similarity(app, %s) DESC, rating DESC, reviews_int DESC
-                LIMIT 20
-            """, [query, query])
+                WHERE app ILIKE %s
+                ORDER BY rating DESC, reviews_int DESC
+                LIMIT 10
+            """, [f"%{query}%"])
             results = cursor.fetchall()
 
     return render(request, 'apps/search_results.html', {'results': results, 'query': query})
+
 
 
 # Search suggestions (AJAX)
