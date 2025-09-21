@@ -227,42 +227,35 @@ def admin_dashboard(request):
 
 # Approve review
 @user_passes_test(lambda u: u.is_staff)
-
-
 def approve_review(request, review_id):
-    # 1️⃣ Get the staging review
+    # Get the staging review
     review = get_object_or_404(StagingReview, pk=review_id)
 
-    # 2️⃣ Create the approved AppReview
+    if review.rating is None:
+        messages.error(request, f"Cannot approve review by {review.submitted_by}: rating is missing.")
+        return redirect("admin_dashboard")
+
+    # Create the approved review, keeping original submitter
     approved_review = AppReview.objects.create(
         app=review.app,
         translated_review=review.translated_review,
-        rating=review.rating,  # ✅ copy rating
-        approved_by=request.user.username,
+        rating=review.rating,
+        approved_by=review.submitted_by,  # original user
         approved_at=timezone.now(),
     )
 
-    # 3️⃣ Update app rating + review count
+    # Update app rating and num_reviews
     app = review.app
+    if app.reviews_int is None:
+        app.reviews_int = 0
+    app.reviews_int += 1
 
-    if not hasattr(app, "num_reviews") or app.num_reviews is None:
-        app.num_reviews = 0
-
-    app.num_reviews += 1
-
-    if app.rating is None:
-        app.rating = review.rating
-    else:
-        total_rating = (app.rating * (app.num_reviews - 1)) + review.rating
-        app.rating = round(total_rating / app.num_reviews, 1)
-
+    current_rating = app.rating if app.rating is not None else 0
+    app.rating = round((current_rating * (app.reviews_int - 1) + review.rating) / app.reviews_int, 1)
     app.save()
 
-    # 4️⃣ Delete staging review
+    # Delete the staging review
     review.delete()
 
-    # 5️⃣ Success message
     messages.success(request, f"Review by {approved_review.approved_by} approved successfully!")
-
     return redirect("admin_dashboard")
-
