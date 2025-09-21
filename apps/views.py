@@ -111,7 +111,7 @@ def app_list(request):
     return render(request, 'apps/app_list.html', {'apps': apps, 'query': q})
 
 # App details with first 5 reviews
-@login_required
+@login_required(login_url='/login/')
 def app_detail(request, app_id):
     app = get_object_or_404(App, pk=app_id)
 
