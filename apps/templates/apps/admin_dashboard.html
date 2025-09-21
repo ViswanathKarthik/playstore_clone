@@ -1,0 +1,36 @@
+{% extends 'apps/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h3>Pending Reviews</h3>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>App</th>
+      <th>Review</th>
+      <th>Submitted By</th>
+      <th>Submitted At</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for review in pending_reviews %}
+    <tr>
+      <td>{{ review.app.app }}</td>
+      <td>{{ review.translated_review }}</td>
+      <td>{{ review.submitted_by }}</td>
+      <td>{{ review.submitted_at }}</td>
+      <td>
+        <a href="{% url 'approve_review' review.id %}" class="btn btn-success btn-sm">Approve</a>
+        <form method="post" action="{% url 'delete_review' review.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No pending reviews.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

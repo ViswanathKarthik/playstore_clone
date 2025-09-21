@@ -1,0 +1,134 @@
+{% extends 'apps/home.html' %}
+{% block title %}{{ app.app }}{% endblock %}
+
+{% block content %}
+<div class="app-info">
+    <h2>{{ app.app }}</h2>
+    <p><strong>Category:</strong> {{ app.category }}</p>
+    <p><strong>Average Rating:</strong> 
+        <span class="star-display">{{ avg_stars }}</span> ({{ avg_rating }})
+    </p>
+</div>
+
+<hr>
+
+<!-- User's Review -->
+{% if user_review %}
+    <div class="user-review alert alert-info">
+        <h4>Your Review {% if under_review %}<small>(Under Review)</small>{% endif %}</h4>
+        <p>
+            <span class="star-display">{{ user_stars }}</span><br>
+            {{ user_review.translated_review }}
+        </p>
+        <a href="{% url 'submit_review' app.id %}" class="btn btn-sm btn-secondary">Edit Review</a>
+    </div>
+{% else %}
+    <a href="{% url 'submit_review' app.id %}" class="btn btn-primary mb-3" id="add-review-btn">Add Review</a>
+{% endif %}
+
+<hr>
+
+<h4>Reviews</h4>
+
+<div id="reviews-container">
+    {% if top_reviews %}
+        {% for review in top_reviews %}
+            <div class="review-item">
+                {% if review.stars %}<span class="star-display">{{ review.stars }}</span><br>{% endif %}
+                <p>{{ review.translated_review }}</p>
+                <small>By {{ review.approved_by|default:"Anonymous" }}</small>
+                <hr>
+            </div>
+        {% endfor %}
+
+        {% if other_reviews %}
+            <button id="see-all-btn" class="btn btn-sm btn-primary">See All Reviews</button>
+        {% endif %}
+        
+    {% else %}
+        {% if user_review %}
+            <p>There are no other reviews yet.</p>
+        {% else %}
+            <p>No reviews yet.</p>
+        {% endif %}
+    {% endif %}
+</div>
+
+<!-- Modal for all reviews -->
+<div id="reviews-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h4>All Reviews</h4>
+        <div id="all-reviews">
+            {% for review in all_reviews %}
+                <div class="review-item">
+                    {% if review.stars %}<span class="star-display">{{ review.stars }}</span><br>{% endif %}
+                    <p>{{ review.translated_review }}</p>
+                    <small>By {{ review.approved_by|default:"Anonymous" }}</small>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<style>
+.star-display { font-size: 24px; color: gold; }
+.user-review { margin-bottom: 20px; }
+.review-item { margin-bottom: 15px; }
+
+/* Modal styling */
+.modal { 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0; 
+    width: 100%; height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5); 
+}
+.modal-content { 
+    background-color: #fefefe; 
+    margin: 10% auto; 
+    padding: 20px; 
+    border: 1px solid #888; 
+    width: 80%; 
+    max-height: 80%; 
+    overflow-y: auto;
+    border-radius: 8px;
+}
+.close { 
+    color: #aaa; 
+    float: right; 
+    font-size: 28px; 
+    font-weight: bold; 
+    cursor: pointer;
+}
+.close:hover, .close:focus { color: black; text-decoration: none; }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("reviews-modal");
+    const btn = document.getElementById("see-all-btn");
+    const close = document.getElementById("close-modal");
+
+    if(btn){
+        btn.addEventListener("click", () => {
+            modal.style.display = "block";
+        });
+    }
+
+    if(close){
+        close.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+    }
+
+    // Close modal when clicking outside of content
+    window.addEventListener("click", (e) => {
+        if(e.target == modal){
+            modal.style.display = "none";
+        }
+    });
+});
+</script>
+{% endblock %}

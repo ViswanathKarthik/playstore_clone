@@ -1,0 +1,32 @@
+{% extends 'apps/base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <form method="get" action="{% url 'search_results' %}">
+        <input type="text" id="search-box" name="query" class="form-control" placeholder="Search for apps...">
+        <div id="suggestions" class="list-group"></div>
+    </form>
+</div>
+
+<h4>Top Apps</h4>
+<div class="row">
+  
+  {% for app in top_apps %}
+
+  <script> var top_apps=top_apps
+  console.log(top_apps, 'top_apps')
+  </script>
+    <div class="col-md-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body">
+
+          <h5 class="card-title">{{ app.app }}</h5>
+          <p class="card-text">⭐ {{ app.rating }} | {{ app.reviews_int }} reviews</p>
+          <a href="{% url 'app_detail' app.id %}" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'apps/base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">Login</button>
+</form>
+<p class="mt-2">Don't have an account? <a href="{% url 'signup_view' %}">Signup here</a>.</p>
+{% endblock %}

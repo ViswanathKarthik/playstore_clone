@@ -1,0 +1,21 @@
+{% extends 'apps/base.html' %}
+{% block title %}Apps{% endblock %}
+
+{% block content %}
+<h3>Search Results{% if query %} for "{{ query }}"{% endif %}</h3>
+<div class="row">
+  {% for app in apps %}
+    <div class="col-md-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ app.app }}</h5>
+          <p class="card-text">Rating: {{ app.rating }}</p>
+          <a href="{% url 'app_detail' app.id %}" class="btn btn-primary btn-sm">View</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>No apps found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

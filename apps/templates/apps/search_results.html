@@ -1,0 +1,25 @@
+{% extends 'apps/base.html' %}
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<h3>Search Results for "{{ query }}"</h3>
+
+{% if results %}
+<div class="row">
+  {% for app in results %}
+    <div class="col-md-3 mb-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ app.1 }}</h5>  <!-- tuple index 1 = app name -->
+          <p class="card-text">⭐ {{ app.2 }} | {{ app.3 }} reviews</p>  <!-- rating & reviews_int -->
+          <a href="{% url 'app_detail' app.0 %}" class="btn btn-primary btn-sm">View</a> <!-- tuple index 0 = id -->
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>No apps found matching your query.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'apps/base.html' %}
+{% block title %}All Reviews - {{ app.app }}{% endblock %}
+
+{% block content %}
+<h3>All Reviews for {{ app.app }}</h3>
+<ul class="list-group mb-2">
+  {% for review in reviews %}
+    <li class="list-group-item">{{ review.translated_review }} - <small>{{ review.created_at }}</small></li>
+  {% empty %}
+    <li class="list-group-item">No reviews yet.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'app_detail' app.id %}" class="btn btn-link">Back</a>
+{% endblock %}

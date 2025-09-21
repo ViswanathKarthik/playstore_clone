@@ -1,0 +1,64 @@
+{% extends 'apps/home.html' %}
+{% block title %}Submit Review for {{ app.app }}{% endblock %}
+
+{% block content %}
+<h3>Submit Review for {{ app.app }}</h3>
+
+<form method="post">
+  {% csrf_token %}
+    <!-- 🔹 Rating Heading -->
+  <p><strong>Rating:</strong></p>
+  <!-- ⭐ Star Rating -->
+  <div id="star-rating">
+    {% for i in "12345" %}
+      <span class="star {% if user_review and user_review.rating|default:0 >= i|add:"0" %}selected{% endif %}" data-value="{{ i }}">★</span>
+    {% endfor %}
+  </div>
+
+  <!-- 🔹 Rating Heading -->
+  <p><strong>Review:</strong></p>
+  
+  {{ form.rating }}  <!-- hidden input -->
+
+  <!-- 📝 Review Text -->
+  {{ form.translated_review }}
+
+  <!-- Buttons -->
+  <div style="margin-top: 10px;">
+      <button type="submit" class="btn btn-primary">
+          {% if user_review %} Update Review {% else %} Submit Review {% endif %}
+      </button>
+      <a href="{% url 'app_detail' app.id %}" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const stars = document.querySelectorAll("#star-rating .star");
+  const ratingInput = document.getElementById("id_rating");
+  let currentRating = parseInt(ratingInput.value || 0);
+
+  function highlightStars(rating) {
+    stars.forEach((star, idx) => {
+      star.classList.toggle("selected", idx < rating);
+    });
+  }
+
+  highlightStars(currentRating);
+
+  stars.forEach(star => {
+    star.addEventListener("click", () => {
+      const rating = parseInt(star.dataset.value);
+      ratingInput.value = rating;
+      highlightStars(rating);
+      console.log("Selected rating:", rating);
+    });
+  });
+});
+</script>
+
+<style>
+.star { font-size: 24px; cursor: pointer; color: lightgray; }
+.star.selected { color: gold; }
+</style>
+{% endblock %}
