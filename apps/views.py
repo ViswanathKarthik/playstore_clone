@@ -15,6 +15,7 @@ from django.shortcuts import render
 from django.utils import timezone
 
 # Home / login redirect
+@login_required(login_url='/login/')
 def home(request):
     # Get top 10 apps ordered by rating descending, then reviews_int descending
     top_apps = App.objects.exclude(rating__isnull=True).order_by('-rating', '-reviews_int')[:10]
