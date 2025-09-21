@@ -29,4 +29,31 @@
     </div>
   {% endfor %}
 </div>
+<!-- At the bottom of home.html, before </body> -->
+<script>
+$(document).ready(function(){
+    $("#search-box").keyup(function(){
+        let query = $(this).val();
+        if(query.length > 0){
+            $.ajax({
+                url: "/search_suggestions/",
+                data: {'query': query},
+                dataType: 'json',
+                success: function(data){
+                    let suggestions = data.suggestions;
+                    let html = '';
+                    suggestions.forEach(function(item){
+                        html += '<a href="/apps/?q=' + encodeURIComponent(item) + '" class="list-group-item list-group-item-action">' + item + '</a>';
+                    });
+                    $("#suggestions").html(html).show();
+                }
+            });
+        } else {
+            $("#suggestions").hide();
+        }
+    });
+});
+</script>
+
 {% endblock %}
+
