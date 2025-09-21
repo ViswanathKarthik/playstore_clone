@@ -15,7 +15,7 @@
 <!-- User's Review -->
 {% if user_review %}
     <div class="user-review alert alert-info">
-        <h4>Your Review {% if under_review %}<small>(Under Review)</small>{% endif %}</h4>
+        <h4>Your Submission is {% if under_review %}<small>(Under Review)</small>{% endif %}</h4>
         <p>
             <span class="star-display">{{ user_stars }}</span><br>
             {{ user_review.translated_review }}
@@ -132,3 +132,4 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 {% endblock %}
+
